@@ -1,30 +1,35 @@
 package com.sem;
 
+import com.sem.dto.LandPlotResponseDTO;
+import com.sem.service.LandPlotService;
+import com.sem.service.LandPlotServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class App {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
     public static void main(String[] args) throws IOException, URISyntaxException {
 
-        LandMapClient landMapClient = new LandMapClient();
+        LOGGER.info("START GENERATION");
+      
+        LandPlotService landPlotService = new LandPlotServiceImpl();
 
-        ExcelGenerator excelGenerator = new ExcelGenerator();
-        List list = new ArrayList();
         String koatuu = "2610400000";
         String zone =  "08";
         String quartal =  "009";
         String parcel =  "0021";
 
-        Map<String, Object> responseMap =  landMapClient.getLanObject(koatuu, zone, quartal, parcel);
-        if(responseMap.containsKey("data") && !((Map) responseMap.get("data")).isEmpty()) {
-            Map<String, Object> plotMap = (Map<String, Object>) responseMap.get("data");
-            list.add(plotMap);
-        }
+        LandPlotResponseDTO landPlotDTO = landPlotService.getLandPlot(koatuu, zone, quartal, parcel);
+        
+/*        ExcelGenerator excelGenerator = new ExcelGenerator();
+       
+        excelGenerator.generateLandPlotReport(landPlotService.getLandPlotList(koatuu), koatuu);*/
 
-        excelGenerator.generateLandPlotReport(list);
+        LOGGER.info("FINISH GENERATION");
     }
 }

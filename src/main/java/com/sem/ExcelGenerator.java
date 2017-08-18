@@ -1,23 +1,27 @@
 package com.sem;
 
+import com.sem.dto.LandPlotDTO;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
-import java.util.Map;
 
 public class ExcelGenerator {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExcelGenerator.class);
+
     public static String FILE_PATH = "/home/vseman/SS/VMS/LandPlotSearcher/out/";
 
-    /*TODO: temporal list of map should be DTO object*/
-    public void generateLandPlotReport(List<Map<String, Object>> responseMapList) {
-        System.out.println("Start");
+    public void generateLandPlotReport(List<LandPlotDTO> landPlotList, String koatuu) {
+        
+        LOGGER.debug("In generateLandPlotReport");
 
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Земельні ділянки");
@@ -33,45 +37,36 @@ public class ExcelGenerator {
         headerRow.createCell(headerCellNum++).setCellValue("cadnum");
         headerRow.createCell(headerCellNum++).setCellValue("ownershipcode");
         headerRow.createCell(headerCellNum++).setCellValue("purpose");
+        headerRow.createCell(headerCellNum++).setCellValue("use");
         headerRow.createCell(headerCellNum++).setCellValue("area");
         headerRow.createCell(headerCellNum++).setCellValue("unit_area");
         headerRow.createCell(headerCellNum++).setCellValue("ownershipvalue");
         headerRow.createCell(headerCellNum++).setCellValue("id_office");
 
-        String fileName = "LandPlotReport";
+        for (LandPlotDTO landPlotDTO : landPlotList) {
+            int cellNum = 0;
 
-        for (Map<String, Object> responseMap : responseMapList) {
-            if (responseMap.containsKey("data") && !((Map) responseMap.get("data")).isEmpty()) {
-                Map<String, Object> plotMap = (Map<String, Object>) responseMap.get("data");
+            Row row = sheet.createRow(rowNum++);
 
-                fileName += plotMap.get("koatuu");
-                int cellNum = 0;
-
-                Row row = sheet.createRow(rowNum++);
-
-                row.createCell(cellNum++).setCellValue((Long) plotMap.get("koatuu"));
-                row.createCell(cellNum++).setCellValue((Integer) plotMap.get("zona"));
-                row.createCell(cellNum++).setCellValue((Integer) plotMap.get("kvartal"));
-                row.createCell(cellNum++).setCellValue((Integer) plotMap.get("parcel"));
-                row.createCell(cellNum++).setCellValue((String) plotMap.get("cadnum"));
-                row.createCell(cellNum++).setCellValue((Integer) plotMap.get("ownershipcode"));
-                row.createCell(cellNum++).setCellValue((String) plotMap.get("purpose"));
-                row.createCell(cellNum++).setCellValue((String) plotMap.get("area"));
-                row.createCell(cellNum++).setCellValue((String) plotMap.get("unit_area"));
-                row.createCell(cellNum++).setCellValue((String) plotMap.get("ownershipvalue"));
-                row.createCell(cellNum++).setCellValue((Integer) plotMap.get("id_office"));
-            }
+            row.createCell(cellNum++).setCellValue(landPlotDTO.getKoatuu());
+            row.createCell(cellNum++).setCellValue(landPlotDTO.getZona());
+            row.createCell(cellNum++).setCellValue(landPlotDTO.getKvartal());
+            row.createCell(cellNum++).setCellValue(landPlotDTO.getParcel());
+            row.createCell(cellNum++).setCellValue(landPlotDTO.getCadNum());
+            row.createCell(cellNum++).setCellValue(landPlotDTO.getOwnershipCode());
+            row.createCell(cellNum++).setCellValue(landPlotDTO.getPurpose());
+            row.createCell(cellNum++).setCellValue(landPlotDTO.getUse());
+            row.createCell(cellNum++).setCellValue(landPlotDTO.getArea());
+            row.createCell(cellNum++).setCellValue(landPlotDTO.getUnitArea());
+            row.createCell(cellNum++).setCellValue(landPlotDTO.getOwnershipValue());
+            row.createCell(cellNum++).setCellValue(landPlotDTO.getOfficeId());
         }
 
-
-        try {
-            OutputStream outputStream = new FileOutputStream(FILE_PATH + fileName + ".xlsx");
+        try (OutputStream outputStream = new FileOutputStream(FILE_PATH + "LandPlotReport" + koatuu + ".xlsx")) {
             workbook.write(outputStream);
-            workbook.close();
+            LOGGER.info("Generation of excel file finished successfully");
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("Done");
+            LOGGER.error("Error during generation of excel report", e);
+        }       
     }
 }
