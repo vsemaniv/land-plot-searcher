@@ -33,8 +33,8 @@ public class LandPlotServiceImpl implements LandPlotService {
         URIBuilder uriBuilder = new URIBuilder();
 
         uriBuilder.setScheme("http")
-                .setHost("map.land.gov.ua")
-                .setPath("/kadastrova-karta/get-parcel-Info")
+                .setHost("")
+                .setPath("")
                 .setParameter("koatuu", koatuu)
                 .setParameter("zone", zone)
                 .setParameter("quartal", quartal)
