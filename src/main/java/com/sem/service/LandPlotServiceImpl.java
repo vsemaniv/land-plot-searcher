@@ -97,6 +97,7 @@ public class LandPlotServiceImpl implements LandPlotService {
 
                     if (landPlotResponseDTO != null && landPlotResponseDTO.getData() != null) {
                         list.add(landPlotResponseDTO.getData());
+                        absentCount = 0;
                     } else {
                         absentCount++;
                     }
