@@ -21,7 +21,7 @@ import java.util.List;
 
 public class LandPlotServiceImpl implements LandPlotService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExcelGenerator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LandPlotServiceImpl.class);
 
     private static HttpClient client = HttpClientBuilder.create().build();
     
@@ -61,7 +61,7 @@ public class LandPlotServiceImpl implements LandPlotService {
             }
 
             // To avoid list creating, API returns only one land plot per one request
-            String json = result.toString().replace("[", "").replace("]", "");
+            String json = result.toString().replace("[", "").replace("]", "").replace("\"data\":}", "\"data\":null}");
 
             LOGGER.info(json);
 
@@ -79,23 +79,23 @@ public class LandPlotServiceImpl implements LandPlotService {
 
         List<LandPlotDTO> list = new ArrayList<>();
 
-        for (int zoneInt = 1; zoneInt < 99; zoneInt++) {
+        for (int zoneInt = 1; zoneInt < 60; zoneInt++) {
 
             String zone = String.format("%02d", zoneInt);
 
-            for (int quartalInt = 1; quartalInt < 999; quartalInt++) {
+            for (int quartalInt = 1; quartalInt < 100; quartalInt++) {
 
                 String quartal = String.format("%03d", quartalInt);
 
                 //To avoid redundant calls to API if there are no more parcels in the quartal
                 int absentCount = 0;
-                for (int parcelInt = 1; parcelInt < 9999 && absentCount < 50; parcelInt++) {
+                for (int parcelInt = 1; parcelInt < 9999 && absentCount < 30; parcelInt++) {
 
                     String parcel = String.format("%04d", parcelInt);
 
                     LandPlotResponseDTO landPlotResponseDTO = getLandPlot(koatuu, zone, quartal, parcel);
 
-                    if (landPlotResponseDTO.getData() != null) {
+                    if (landPlotResponseDTO != null && landPlotResponseDTO.getData() != null) {
                         list.add(landPlotResponseDTO.getData());
                     } else {
                         absentCount++;

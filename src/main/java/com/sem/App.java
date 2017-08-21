@@ -20,15 +20,15 @@ public class App {
         LandPlotService landPlotService = new LandPlotServiceImpl();
 
         String koatuu = "2610400000";
-        String zone =  "08";
+        /*String zone =  "08";
         String quartal =  "009";
         String parcel =  "0021";
 
         LandPlotResponseDTO landPlotDTO = landPlotService.getLandPlot(koatuu, zone, quartal, parcel);
-        
-/*        ExcelGenerator excelGenerator = new ExcelGenerator();
+        */
+        ExcelGenerator excelGenerator = new ExcelGenerator();
        
-        excelGenerator.generateLandPlotReport(landPlotService.getLandPlotList(koatuu), koatuu);*/
+        excelGenerator.generateLandPlotReport(landPlotService.getLandPlotList(koatuu), koatuu);
 
         LOGGER.info("FINISH GENERATION");
     }
